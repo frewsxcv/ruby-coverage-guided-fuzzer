@@ -37,21 +37,26 @@ end
 
 def start_fuzzing_process(file_path, writer)
   fork do
-    STDOUT.reopen('/dev/null')
+    # STDOUT.reopen('/dev/null')
     STDIN.reopen('/dev/null')
-    Coverage.start(:all)
+    loop do
+      bytes = Random.new.bytes(10)
 
-    bytes = Random.new.bytes(10)
+      fork do
+        Coverage.start(:all)
 
-    begin
-      load(file_path)
-      fuzz(bytes)
-    rescue => e
-      puts "Encountered an exception: #{e}"
-      exit(1)
+        begin
+          load(file_path)
+          fuzz(bytes)
+        rescue => e
+          puts "Encountered an exception: #{e}"
+          exit(1)
+        end
+
+        writer.puts(Base64.strict_encode64(bytes) + '_' + Coverage.result.hash.to_s)
+      end
+      Process.wait
     end
-
-    writer.puts(Base64.strict_encode64(bytes) + '_' + Coverage.result.hash.to_s)
   end
 end
 
@@ -70,12 +75,10 @@ def run
 
   reader, writer = IO.pipe
 
-  start_reporting_process(reader)
+  reporting_pid = start_reporting_process(reader)
+  start_fuzzing_process(file_path, writer)
 
-  loop do
-    start_fuzzing_process(file_path, writer)
-    Process.wait
-  end
+  Process.wait(reporting_pid)
 end
 
 run

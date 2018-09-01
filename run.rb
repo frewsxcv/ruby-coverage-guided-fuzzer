@@ -2,6 +2,24 @@
 
 require 'coverage'
 
+# Is the `fuzz` function defined in the fuzz target?
+def fuzz_function_exists?(file_path)
+  reader, writer = IO.pipe
+  fork do
+    load(file_path)
+    begin
+      method(:fuzz)
+    rescue NameError
+      writer.puts('false')
+    else
+      writer.puts('true')
+    end
+  end
+  Process.wait
+  writer.close
+  reader.gets == "true\n"
+end
+
 if ARGV.length != 1
   puts 'USAGE: fuzz.rb <FILE TO FUZZ>'
   exit

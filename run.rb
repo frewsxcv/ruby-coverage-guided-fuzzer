@@ -25,6 +25,10 @@ end
 file_path = ARGV[0].freeze
 
 # TODO: ensure we don't load this file
+if !fuzz_function_exists?(file_path)
+  puts "ERROR: `fuzz` function doesn’t exist in #{file_path}"
+  exit
+end
 
 fork do
   Coverage.start(:all)

@@ -37,7 +37,7 @@ end
 
 def start_fuzzing_process(file_path, writer)
   fork do
-    # STDOUT.reopen('/dev/null')
+    STDOUT.reopen('/dev/null')
     STDIN.reopen('/dev/null')
     loop do
       bytes = Random.new.bytes(10)

@@ -29,7 +29,7 @@ def start_reporting_process(reader)
         next
       end
 
-      seen[cov_hash] = Base64.strict_decode64(encoded_bytes)
+      seen[cov_hash] = Base64.strict_decode64(encoded_bytes).freeze
       puts(seen)
     end
   end

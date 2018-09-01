@@ -32,9 +32,14 @@ end
 
 fork do
   Coverage.start(:all)
-  load(file_path)
 
-  fuzz(Random.new.bytes(10))
+  begin
+    load(file_path)
+    fuzz(Random.new.bytes(10))
+  rescue => e
+    puts "Encountered an exception: #{e}"
+    exit
+  end
 
   p Coverage.result
 end

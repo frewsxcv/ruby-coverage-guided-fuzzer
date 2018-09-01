@@ -30,21 +30,30 @@ if !fuzz_function_exists?(file_path)
   exit(1)
 end
 
+reader, writer = IO.pipe
+
 fork do
-  STDOUT.reopen('/dev/null')
-  STDIN.reopen('/dev/null')
-
-  Coverage.start(:all)
-
-  begin
-    load(file_path)
-    fuzz(Random.new.bytes(10))
-  rescue => e
-    puts "Encountered an exception: #{e}"
-    exit(1)
+  loop do
+    puts "reading from IO pipe: #{reader.gets.strip}"
   end
-
-  p Coverage.result
 end
 
-Process.wait
+loop do
+  fork do
+    STDOUT.reopen('/dev/null')
+    STDIN.reopen('/dev/null')
+
+    Coverage.start(:all)
+
+    begin
+      load(file_path)
+      fuzz(Random.new.bytes(10))
+    rescue => e
+      puts "Encountered an exception: #{e}"
+      exit(1)
+    end
+
+    writer.puts(Coverage.result.hash)
+  end
+  Process.wait
+end

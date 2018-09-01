@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'coverage'
+require 'base64'
 
 # Is the `fuzz` function defined in the fuzz target?
 def fuzz_function_exists?(file_path)
@@ -33,8 +34,15 @@ end
 reader, writer = IO.pipe
 
 fork do
+  seen = {}
   loop do
-    puts "reading from IO pipe: #{reader.gets.strip}"
+    encoded_bytes, cov_hash = reader.gets.strip.split('_')
+    decoded_bytes = Base64.strict_decode64(encoded_bytes)
+
+    if !seen.include?(cov_hash)
+      seen[cov_hash] = Base64.strict_decode64(encoded_bytes)
+      puts(seen)
+    end
   end
 end
 
@@ -45,15 +53,17 @@ loop do
 
     Coverage.start(:all)
 
+    bytes = Random.new.bytes(10)
+
     begin
       load(file_path)
-      fuzz(Random.new.bytes(10))
+      fuzz(bytes)
     rescue => e
       puts "Encountered an exception: #{e}"
       exit(1)
     end
 
-    writer.puts(Coverage.result.hash)
+    writer.puts(Base64.strict_encode64(bytes) + '_' + Coverage.result.hash.to_s)
   end
   Process.wait
 end

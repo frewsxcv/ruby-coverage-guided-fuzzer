@@ -31,6 +31,9 @@ if !fuzz_function_exists?(file_path)
 end
 
 fork do
+  STDOUT.reopen('/dev/null')
+  STDIN.reopen('/dev/null')
+
   Coverage.start(:all)
 
   begin

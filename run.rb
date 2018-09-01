@@ -2,9 +2,13 @@
 
 require 'coverage'
 
-Coverage.start(:all)
-# Coverage.start(branches: true)
-# Coverage.start(methods: true)
-# Coverage.start(lines: true)
-load('foo.rb', true)
-p Coverage.result
+fork do
+  Coverage.start(:all)
+  load('foo.rb')
+
+  fuzz(Random.new.bytes(10))
+
+  p Coverage.result
+end
+
+Process.wait

@@ -1,10 +1,11 @@
-s = 0
-10.times do |x|
-  s += x
+def run(num)
+  if num == 45
+    p :ok
+  else
+    p :ng
+  end
 end
 
-if s == 45
-  p :ok
-else
-  p :ng
+def fuzz(bytes)
+  run(bytes[0])
 end

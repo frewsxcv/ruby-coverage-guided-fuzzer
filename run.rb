@@ -62,14 +62,14 @@ end
 
 def run
   if ARGV.length != 1
-    puts 'USAGE: fuzz.rb <FILE TO FUZZ>'
+    STDERR.puts('USAGE: fuzz.rb <FILE TO FUZZ>')
     exit(1)
   end
   file_path = ARGV[0].freeze
 
   # TODO: ensure we don't load this file
   if !fuzz_function_exists?(file_path)
-    puts "ERROR: `fuzz` function doesn’t exist in #{file_path}"
+    STDERR.puts("ERROR: `fuzz` function doesn’t exist in #{file_path}")
     exit(1)
   end
 

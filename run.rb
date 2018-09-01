@@ -37,7 +37,6 @@ fork do
   seen = {}
   loop do
     encoded_bytes, cov_hash = reader.gets.strip.split('_')
-    decoded_bytes = Base64.strict_decode64(encoded_bytes)
 
     if !seen.include?(cov_hash)
       seen[cov_hash] = Base64.strict_decode64(encoded_bytes)

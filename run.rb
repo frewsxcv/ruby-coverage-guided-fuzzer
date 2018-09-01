@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 require 'coverage'
+
 Coverage.start(:all)
 # Coverage.start(branches: true)
 # Coverage.start(methods: true)

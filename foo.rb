@@ -1,8 +1,10 @@
 def run(num)
-  if num == 45
-    p :ok
+  if num == '0'
+    a = 0
+  elsif num == '1'
+    a = 1
   else
-    p :ng
+    a = nil
   end
 end
 

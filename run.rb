@@ -20,14 +20,14 @@ end
 
 if ARGV.length != 1
   puts 'USAGE: fuzz.rb <FILE TO FUZZ>'
-  exit
+  exit(1)
 end
 file_path = ARGV[0].freeze
 
 # TODO: ensure we don't load this file
 if !fuzz_function_exists?(file_path)
   puts "ERROR: `fuzz` function doesn’t exist in #{file_path}"
-  exit
+  exit(1)
 end
 
 fork do
@@ -38,7 +38,7 @@ fork do
     fuzz(Random.new.bytes(10))
   rescue => e
     puts "Encountered an exception: #{e}"
-    exit
+    exit(1)
   end
 
   p Coverage.result

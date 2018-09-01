@@ -29,8 +29,9 @@ def start_reporting_process(reader)
         next
       end
 
-      seen[cov_hash] = Base64.strict_decode64(encoded_bytes).freeze
-      puts(seen)
+      decoded_bytes = Base64.strict_decode64(encoded_bytes).freeze
+      seen[cov_hash] = decoded_bytes
+      puts("Encountered new code path with input bytes: #{decoded_bytes.inspect}")
     end
   end
 end
@@ -40,6 +41,7 @@ def start_fuzzing_process(file_path, writer)
     STDOUT.reopen('/dev/null')
     STDIN.reopen('/dev/null')
     loop do
+      # TODO: better input generation
       bytes = Random.new.bytes(10)
 
       fork do
@@ -53,6 +55,7 @@ def start_fuzzing_process(file_path, writer)
           exit(1)
         end
 
+        # TODO: replace numbers in hash with booleans
         writer.puts(Base64.strict_encode64(bytes) + '_' + Coverage.result.hash.to_s)
       end
       Process.wait

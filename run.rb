@@ -10,14 +10,12 @@ def fuzz_function_exists?(file_path)
     begin
       method(:fuzz)
     rescue NameError
-      writer.puts('false')
+      writer.putc('0')
     else
-      writer.puts('true')
+      writer.putc('1')
     end
   end
-  Process.wait
-  writer.close
-  reader.gets == "true\n"
+  reader.getc == '1'
 end
 
 if ARGV.length != 1

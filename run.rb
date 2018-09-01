@@ -25,19 +25,20 @@ def start_reporting_process(reader)
     loop do
       encoded_bytes, cov_hash = reader.gets.strip.split('_')
 
-      if !seen.include?(cov_hash)
-        seen[cov_hash] = Base64.strict_decode64(encoded_bytes)
-        puts(seen)
+      if seen.include?(cov_hash)
+        next
       end
+
+      seen[cov_hash] = Base64.strict_decode64(encoded_bytes)
+      puts(seen)
     end
   end
 end
 
-def start_fuzzing_process(writer)
+def start_fuzzing_process(file_path, writer)
   fork do
     STDOUT.reopen('/dev/null')
     STDIN.reopen('/dev/null')
-
     Coverage.start(:all)
 
     bytes = Random.new.bytes(10)
@@ -72,7 +73,7 @@ def run
   start_reporting_process(reader)
 
   loop do
-    start_fuzzing_process
+    start_fuzzing_process(file_path, writer)
     Process.wait
   end
 end

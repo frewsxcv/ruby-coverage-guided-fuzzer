@@ -11,3 +11,5 @@ Encountered new code path with input bytes:
 Encountered new code path with input bytes:
 	bytes: "0\xF4\xDA\x8D\xD83\xD8\xDE\xDD\x9F"
 ```
+
+All files licensed [CC0](https://creativecommons.org/publicdomain/zero/1.0/).

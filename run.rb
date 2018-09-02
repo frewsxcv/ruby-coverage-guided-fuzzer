@@ -58,6 +58,7 @@ def start_fuzzing_process(file_path, writer)
           load(file_path)
           fuzz(bytes)
         rescue => e
+          # TODO: this error doesn't show up
           puts "Encountered an exception: #{e}"
           exit(1)
         end

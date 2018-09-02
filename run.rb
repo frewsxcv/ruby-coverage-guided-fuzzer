@@ -27,7 +27,7 @@ def start_reporting_process(reader)
 
       encoded_bytes = message[:bytes]
       # TODO: replace numbers in hash with booleans
-      cov_hash = message[:cov].hash
+      cov_hash = message[:cov_hash]
 
       if seen.include?(cov_hash)
         next
@@ -66,7 +66,7 @@ def start_fuzzing_process(file_path, writer)
           Base64.strict_encode64(
             Marshal.dump({
               bytes: bytes,
-              cov: Coverage.result,
+              cov_hash: Coverage.result.hash,
             })
           )
         )

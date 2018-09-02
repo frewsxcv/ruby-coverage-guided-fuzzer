@@ -23,15 +23,22 @@ def start_reporting_process(reader)
   fork do
     seen = {}
     loop do
-      encoded_bytes, cov_hash = reader.gets.strip.split('_')
+      message = Marshal.load(Base64.strict_decode64(reader.gets.strip))
+
+      encoded_bytes = message[:bytes]
+      # TODO: replace numbers in hash with booleans
+      cov_hash = message[:cov].hash
 
       if seen.include?(cov_hash)
         next
       end
 
-      decoded_bytes = Base64.strict_decode64(encoded_bytes).freeze
-      seen[cov_hash] = decoded_bytes
-      puts("Encountered new code path with input bytes: #{decoded_bytes.inspect}")
+      # TODO: merge all the cov hashes we've seen to print coverage %
+      #       https://github.com/mame/coverage-helpers
+
+      seen[cov_hash] = encoded_bytes
+      puts('Encountered new code path with input bytes:')
+      puts("\tbytes: #{encoded_bytes.inspect}")
     end
   end
 end
@@ -55,8 +62,14 @@ def start_fuzzing_process(file_path, writer)
           exit(1)
         end
 
-        # TODO: replace numbers in hash with booleans
-        writer.puts(Base64.strict_encode64(bytes) + '_' + Coverage.result.hash.to_s)
+        writer.puts(
+          Base64.strict_encode64(
+            Marshal.dump({
+              bytes: bytes,
+              cov: Coverage.result,
+            })
+          )
+        )
       end
       Process.wait
     end

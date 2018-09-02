@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'coverage'
-require 'base64'
+require "coverage"
+require "base64"
 
 # Is the `fuzz` function defined in the fuzz target?
 def fuzz_function_exists?(file_path)
@@ -11,12 +11,12 @@ def fuzz_function_exists?(file_path)
     begin
       method(:fuzz)
     rescue NameError
-      writer.putc('0')
+      writer.putc("0")
     else
-      writer.putc('1')
+      writer.putc("1")
     end
   end
-  reader.getc == '1'
+  reader.getc == "1"
 end
 
 def start_reporting_process(reader)
@@ -36,7 +36,7 @@ def start_reporting_process(reader)
       #       https://github.com/mame/coverage-helpers
 
       seen[cov_hash] = encoded_bytes
-      puts('Encountered new code path with input bytes:')
+      puts("Encountered new code path with input bytes:")
       puts("\tbytes: #{encoded_bytes.inspect}")
     end
   end
@@ -44,8 +44,8 @@ end
 
 def start_fuzzing_process(file_path, writer)
   fork do
-    STDOUT.reopen('/dev/null')
-    STDIN.reopen('/dev/null')
+    STDOUT.reopen("/dev/null")
+    STDIN.reopen("/dev/null")
     loop do
       # TODO: better input generation
       bytes = Random.new.bytes(10)
@@ -85,7 +85,7 @@ end
 
 def run
   if ARGV.length != 1
-    STDERR.puts('USAGE: fuzz.rb <FILE TO FUZZ>')
+    STDERR.puts("USAGE: fuzz.rb <FILE TO FUZZ>")
     exit(1)
   end
   file_path = ARGV[0].freeze

@@ -1,0 +1,17 @@
+Layout/IndentHash:
+  EnforcedStyle: consistent
+
+Metrics/MethodLength:
+  Max: 30
+
+Style/BracesAroundHashParameters:
+  EnforcedStyle: braces
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/NegatedIf:
+  Enabled: false

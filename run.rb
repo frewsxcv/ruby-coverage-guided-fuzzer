@@ -26,7 +26,6 @@ def start_reporting_process(reader)
       message = Marshal.load(Base64.strict_decode64(reader.gets.strip))
 
       encoded_bytes = message[:bytes]
-      # TODO: replace numbers in hash with booleans
       cov_hash = message[:cov_hash]
 
       if seen.include?(cov_hash)
@@ -52,7 +51,14 @@ def start_fuzzing_process(file_path, writer)
       bytes = Random.new.bytes(10)
 
       fork do
-        Coverage.start(:all)
+        # Ideally, we’d also include branch coverage here via:
+        #
+        #   Coverage.start(:all)
+        #
+        # ...but if we turn this on, it seems each fuzz target run we d
+        # generates a new unique hash, even if it goes the same code path. So
+        # some further investigation is needed before enabling this.
+        Coverage.start
 
         begin
           load(file_path)
